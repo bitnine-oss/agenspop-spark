@@ -1,0 +1,105 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.12.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+	id 'scala'
+}
+
+group = 'net.bitnine'
+version = '0.7.3'
+
+sourceCompatibility = '1.8'
+targetCompatibility = JavaVersion.VERSION_1_8
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		url "https://dl.bintray.com/spark-packages/maven/"
+	}
+}
+
+// mixed scala and java
+sourceSets.main.java.srcDirs = []
+sourceSets.main.scala.srcDirs = ['src/main/java', 'src/main/scala']
+sourceSets.test.java.srcDirs = []
+sourceSets.test.scala.srcDirs = ['src/test/java', 'src/test/scala']
+
+////////////////////////////////////////
+
+// version properties
+def scalaBase="2.11"
+def scalaVersion=scalaBase+".12"
+def sparkVersion="2.4.3"
+def esHadoopVersion="7.3.2"
+def slf4jVersion="1.7.28"
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-web') {
+		// exclude group:'org.springframework.boot', module:'spring-boot-starter-tomcat'
+		// exclude group:'ch.qos.logback', module:'logback-classic'
+	}
+	implementation 'org.springframework.boot:spring-boot-starter-jetty'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// ElasticSearch Library
+	implementation "org.elasticsearch:elasticsearch-spark-20_${scalaBase}:${esHadoopVersion}"
+	// Scala 2.11 Library
+	implementation "org.scala-lang:scala-library:${scalaVersion}"
+
+	// Spark for Scala 2.11 Library
+	implementation "org.apache.spark:spark-core_${scalaBase}:${sparkVersion}"
+	implementation "org.apache.spark:spark-sql_${scalaBase}:${sparkVersion}"
+	implementation "org.apache.spark:spark-graphx_${scalaBase}:${sparkVersion}"
+	implementation "graphframes:graphframes:0.7.0-spark2.4-s_${scalaBase}"
+
+	// fix java.lang.ClassNotFoundException: org.codehaus.commons.compiler.UncheckedCompileException
+	implementation 'org.codehaus.janino:commons-compiler:3.1.0'
+
+	// for client (demo) -->
+	implementation 'org.webjars:webjars-locator-core'
+	implementation 'org.webjars:sockjs-client:1.0.2'
+	implementation 'org.webjars:stomp-websocket:2.3.3'
+	implementation 'org.webjars:bootstrap:3.3.7-1'
+	implementation 'org.webjars:jquery:3.1.1'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+	dependencies {
+		dependency("org.springframework.boot:spring-boot-starter-web:2.1.12.RELEASE") {
+			exclude 'org.springframework.boot:spring-boot-starter-tomcat'
+		}
+		dependency("org.springframework.boot:spring-boot-starter-logging:2.1.12.RELEASE") {
+			exclude 'ch.qos.logback:logback-classic'
+		}
+	}
+}
+
+// ** still problem
+// https://github.com/elastic/elasticsearch-hadoop/issues/1358#issuecomment-591939365
+bootJar {
+    requiresUnpack '**/elasticsearch-hadoop*.jar'
+}
+
+task printProps {
+	doFirst {
+		println scalaBase
+		println scalaVersion
+		println sparkVersion
+		println esHadoopVersion
+		println slf4jVersion
+	}
+	doLast {
+	}
+}

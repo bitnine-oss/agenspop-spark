@@ -1,0 +1,49 @@
+## config context path to "/" by setting an empty string
+server:
+  port: 8081
+  error:
+    whitelabel:
+      enabled: false
+
+logging:
+  config: ${agens.spark.spark-home}/conf/log4j.properties
+  level:
+    root: warn
+
+spring:
+  pid:
+    file: ${agens.product.name}.pid
+  main:
+    banner-mode: "off"
+  resources:
+    cache:
+      period: 3600
+    static-locations: classpath:/resources/,classpath:/static/
+  groovy:
+    template:
+      check-template-location: false
+
+agens:
+  api:
+    base-path: /api
+    query-timeout: 600000       # 1000 ms = 1 sec
+  elasticsearch:
+    host: 27.117.163.21
+    port: 15619
+#    host: 192.168.0.54
+#    port: 8087
+    username:
+    password:
+    page-size: 2500
+    vertex-index: elasticvertex
+    edge-index: elasticedge
+  spark:
+    app-name: es-bitnine
+    spark-home: /Users/bgmin/Servers/spark
+    master-uri: local
+    executor-memory: 4g
+    driver-memory: 4g
+  product:
+    name: agenspop-spark
+    version: 0.0.1-dev
+    hello-msg: agenspop-spark v1.0 (since 2019-10-01)
