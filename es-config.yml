@@ -18,10 +18,6 @@ spring:
   resources:
     cache:
       period: 3600
-    static-locations: classpath:/resources/,classpath:/static/
-  groovy:
-    template:
-      check-template-location: false
 
 agens:
   api:

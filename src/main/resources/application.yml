@@ -18,20 +18,16 @@ spring:
   resources:
     cache:
       period: 3600
-    static-locations: classpath:/resources/,classpath:/static/
-  groovy:
-    template:
-      check-template-location: false
 
 agens:
   api:
     base-path: /api
     query-timeout: 600000       # 1000 ms = 1 sec
   elasticsearch:
-#    host: tonyne.iptime.org
-#    port: 9200
-    host: 27.117.163.21
-    port: 15619
+    host: 192.168.0.54
+    port: 8087
+    # host: 27.117.163.21
+    # port: 15619
     username:
     password:
     page-size: 2500
