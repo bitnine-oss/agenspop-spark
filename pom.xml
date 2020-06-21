@@ -21,8 +21,8 @@
 		<java.version>1.8</java.version>
 		<scala.base>2.11</scala.base>
 		<scala.version>${scala.base}.12</scala.version>
-		<spark.version>2.4.3</spark.version>
-		<es-hadoop.version>7.3.2</es-hadoop.version>
+		<spark.version>2.4.6</spark.version>
+		<es-hadoop.version>7.7.1</es-hadoop.version>
 		<slf4j.version>1.7.28</slf4j.version>
 	</properties>
 
@@ -97,7 +97,7 @@
 		<dependency>
 			<groupId>graphframes</groupId>
 			<artifactId>graphframes</artifactId>
-			<version>0.7.0-spark2.4-s_${scala.base}</version>
+			<version>0.8.0-spark2.4-s_${scala.base}</version>
 		</dependency>
 
 		<!-- fix java.lang.ClassNotFoundException: org.codehaus.commons.compiler.UncheckedCompileException -->
@@ -189,8 +189,30 @@
 	                    </dependency>
 	                </requiresUnpack>
 	            </configuration>
-
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-jars</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<mkdir dir="${basedir}/target/jars" />
+								<copy todir="${basedir}/target/jars">
+									<fileset dir="${basedir}/jars" includes="**/*.jar" />
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

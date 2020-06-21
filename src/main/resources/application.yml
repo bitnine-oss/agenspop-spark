@@ -24,10 +24,8 @@ agens:
     base-path: /api
     query-timeout: 600000       # 1000 ms = 1 sec
   elasticsearch:
-    host: 127.0.0.1
+    host: 192.168.0.30
     port: 9200
-    # host: 27.117.163.21
-    # port: 15619
     username:
     password:
     page-size: 2500
@@ -36,10 +34,9 @@ agens:
   spark:
     app-name: es-bitnine
     spark-home: /home/bgmin/Servers/spark
-    # master-uri: local
-    master-uri: spark://192.168.0.30/7077
-    executor-memory: 4g
-    driver-memory: 4g
+    # master-uri: spark://192.168.0.30:7077
+    master-uri: local
+    extra-jars: jars/elasticsearch-hadoop-7.7.1.jar,jars/elasticsearch-spark-20_2.11-7.7.1.jar,jars/graphframes-0.8.0-spark2.4-s_2.11.jar
   product:
     name: agenspop-spark
     version: 0.0.1-dev

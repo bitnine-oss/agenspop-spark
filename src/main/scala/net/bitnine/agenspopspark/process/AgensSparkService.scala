@@ -31,6 +31,7 @@ class AgensSparkService		// (@Autowired sparkConf:SparkConf)
 	// case class ElasticVertex(datasource:String, id:String, label:String, properties:Array[ElasticProperty])
 	// case class ElasticEdge(datasource:String, id:String, label:String, properties:Array[ElasticProperty], src:String, dst:String)
 
+	// **NOTE : these schema are useless
 	val schemaProperty = new StructType(Array(
 		StructField("key", StringType, false),
 		StructField("type", StringType, false),
@@ -41,6 +42,7 @@ class AgensSparkService		// (@Autowired sparkConf:SparkConf)
 		StructField("property", schemaProperty, false)
 	))
 	val schemaVertex = StructType( Array(
+		StructField("timestamp", StringType, false),
 		StructField("datasource", StringType, false),
 		StructField("id", StringType, false),
 		StructField("label", StringType, false),

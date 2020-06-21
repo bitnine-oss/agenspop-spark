@@ -68,6 +68,7 @@ public class ElasticSparkService {
         new StructField("value", StringType, false, Metadata.empty())
         });
     public static final StructType schemaV = new StructType(new StructField[]{
+        new StructField("timestamp", StringType, false, Metadata.empty()),
         new StructField("datasource", StringType, false, Metadata.empty()),
         new StructField("id", StringType, false, Metadata.empty()),
         new StructField("label", StringType, false, Metadata.empty()),

@@ -17,8 +17,11 @@ public class SparkProperties {
     private String sparkHome;
     @NotBlank
     private String masterUri = "local";
+    // **NOTE: At build, jar files will copy to target/jars path
+    @NotBlank
+    private String extraJars = "jars/elasticsearch-hadoop-7.7.1.jar,jars/elasticsearch-spark-20_2.11-7.7.1.jar,jars/graphframes-0.8.0-spark2.4-s_2.11.jar";
 
-    private String executorMemory = "2g";
-    private String driverMemory = "2g";
-
+    // set options at spark-default.conf
+    // private String executorMemory = "2g";
+    // private String driverMemory = "2g";
 }
