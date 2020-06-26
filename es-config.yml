@@ -38,5 +38,5 @@ agens:
     extra-jars: jars/elasticsearch-hadoop-7.7.1.jar,jars/elasticsearch-spark-20_2.11-7.7.1.jar,jars/graphframes-0.8.0-spark2.4-s_2.11.jar
   product:
     name: agenspop-spark
-    version: 0.7.7-dev
+    version: 0.7.3-dev
     hello-msg: agenspop-spark v1.0 (since 2019-10-01)
