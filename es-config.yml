@@ -1,6 +1,6 @@
 ## config context path to "/" by setting an empty string
 server:
-  port: 8081
+  port: 38081
   error:
     whitelabel:
       enabled: false
@@ -24,10 +24,10 @@ agens:
     base-path: /api
     query-timeout: 600000       # 1000 ms = 1 sec
   elasticsearch:
-    host: 127.0.0.1
-    port: 9200
-    username:
-    password:
+    host: 192.168.0.30
+    port: 39200
+    username: elastic
+    password: bitnine
     page-size: 2500
     vertex-index: agensvertex
     edge-index: agensedge
@@ -38,5 +38,5 @@ agens:
     extra-jars: jars/elasticsearch-hadoop-7.7.1.jar,jars/elasticsearch-spark-20_2.11-7.7.1.jar,jars/graphframes-0.8.0-spark2.4-s_2.11.jar
   product:
     name: agenspop-spark
-    version: 0.7.3-dev
+    version: 0.7.3
     hello-msg: agenspop-spark v1.0 (since 2019-10-01)

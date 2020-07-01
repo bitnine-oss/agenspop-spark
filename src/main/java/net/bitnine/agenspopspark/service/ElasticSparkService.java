@@ -101,11 +101,14 @@ public class ElasticSparkService {
         Map<String,String> conf = new HashMap<>();
         conf.put("es.nodes", properties.getHost());
         conf.put("es.port", String.valueOf(properties.getPort()));
+        conf.put("es.net.http.auth.user", String.valueOf(properties.getUsername()));
+        conf.put("es.net.http.auth.pass", String.valueOf(properties.getPassword()));
         conf.put("es.nodes.wan.only", "true");
         conf.put("es.mapping.id", "id");
         conf.put("es.write.operation", "upsert");
         conf.put("es.index.auto.create", "true");
         conf.put("es.scroll.size", "10000");
+        conf.put("es.mapping.date.rich","false");		// for timestamp
         conf.put("es.mapping.exclude", "removed,*.present");    // not work about JSON
         return ImmutableMap.copyOf(conf);
     }

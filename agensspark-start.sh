@@ -12,4 +12,4 @@ if [ ! -f $jarfile ]; then
 fi
 
 echo "Run target jar: "${jarfile}"("${cfgname}")"
-java -jar $jarfile --spring.config.name=$cfgname
+nohup java -jar $jarfile --spring.config.name=$cfgname > target/agenspop.log 2>&1 &

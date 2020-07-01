@@ -24,28 +24,14 @@ public class AgensSparkConfig {
                 .setAppName(sparkProperties.getAppName())
                 .setSparkHome(sparkProperties.getSparkHome())
                 .setMaster(sparkProperties.getMasterUri())
-                // ignore timestamp date format
-                .set("es.mapping.date.rich","false")
-                .set("spark.es.mapping.date.rich","false")
                 // send extra jars to worker
                 .set("spark.jars", sparkProperties.getExtraJars())
-                .set("spark.jars","jars/elasticsearch-hadoop-7.7.1.jar,jars/elasticsearch-spark-20_2.11-7.7.1.jar,jars/graphframes-0.8.0-spark2.4-s_2.11.jar")
+                //.set("spark.jars","jars/elasticsearch-hadoop-7.7.1.jar,jars/elasticsearch-spark-20_2.11-7.7.1.jar,jars/graphframes-0.8.0-spark2.4-s_2.11.jar")
                 ;
-//                .set("spark.executor.memory", sparkProperties.getExecutorMemory())
-//                .set("spark.driver.memory", sparkProperties.getDriverMemory())
-//                .set("spark.eventLog.enabled","false");
     }
 
     @Bean
     public JavaSparkContext javaSparkContext() {
-//        SparkConf conf = new SparkConf()
-//                .setAppName(sparkProperties.getAppName())
-//                .setSparkHome(sparkProperties.getSparkHome())
-//                .setMaster(sparkProperties.getMasterUri())
-//                .set("spark.executor.memory", sparkProperties.getExecutorMemory())
-//                .set("spark.driver.memory", sparkProperties.getDriverMemory())
-//                .set("spark.eventLog.enabled","false");
-
         JavaSparkContext jsc = new JavaSparkContext(sparkConf());
         jsc.sc().setLogLevel("ERROR");
 
