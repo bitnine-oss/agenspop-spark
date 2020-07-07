@@ -25,14 +25,15 @@ val spark = SparkSession.builder().config(sc.getConf).getOrCreate
 
 /////////////////////////////////////////////////////////////////
 
-// checkpoint directory (mkdir)
-sc.setCheckpointDir("/Users/bgmin/Temp/checkpoint")
+// checkpoint directory (only Local mode)
+// ==> DO NOT in Cluster mode!!
+// sc.setCheckpointDir("/Users/bgmin/Temp/checkpoint")
 
 
 case class ElasticProperty(key:String, `type`:String, value:String)
 case class ElasticElement(id:String, property:ElasticProperty)
-case class ElasticVertex(datasource:String, id:String, label:String, properties:Array[ElasticProperty])
-case class ElasticEdge(datasource:String, id:String, label:String, properties:Array[ElasticProperty], src:String, dst:String)
+case class ElasticVertex(timestamp:String, datasource:String, id:String, label:String, properties:Array[ElasticProperty])
+case class ElasticEdge(timestamp:String, datasource:String, id:String, label:String, properties:Array[ElasticProperty], src:String, dst:String)
 
 val schemaP = StructType( Array(
 	StructField("key", StringType, false),
@@ -41,6 +42,7 @@ val schemaP = StructType( Array(
 ))
 val encoderP = RowEncoder(schemaP)
 val schemaV = StructType( Array(
+	StructField("timestamp", StringType, false),
 	StructField("datasource", StringType, false),
 	StructField("id", StringType, false),
 	StructField("label", StringType, false),
@@ -50,28 +52,46 @@ val schemaE = schemaV.
 	add(StructField("src", StringType, false)).
 	add(StructField("dst", StringType, false))
 
-val conf = Map("es.nodes"->"bitninejeju.iptime.org","es.port"->"9200","es.nodes.wan.only"->"true",
-	"es.mapping.id"->"id","es.write.operation"->"upsert",
-	"es.index.auto.create"->"true","es.scroll.size"->"10000",
-	"es.mapping.exclude"->"removed,*.present")	// exclude cannot not work
-val resourceV = "elasticvertex"
-val resourceE = "elasticedge"
+val conf = Map(
+	"es.nodes"->"tonyne.iptime.org",
+	"es.port"->"39200",
+	"es.nodes.wan.only"->"true",
+	"es.mapping.id"->"id",
+	"es.write.operation"->"upsert",
+	"es.index.auto.create"->"true",
+	"es.scroll.size"->"10000",
+	"es.net.http.auth.user"->"elastic",			// elasticsearch security
+	"es.net.http.auth.pass"->"bitnine",			// => curl -u user:password
+	"es.mapping.date.rich"->"false"				// for timestamp
+)
+val resourceV = "agensvertex"
+val resourceE = "agensedge"
 
 
-val datasource = "northwind"
-val excludeLabelsV = Array("supplier","category")
-val excludeLabelsE = Array("reports_to","part_of","supplies")
+val datasource = "modern"		// "northwind"
+val esQueryV:String = s"""{ "query": { "bool": {
+	"filter": { "term": { "datasource": "${datasource}" } }
+}}}"""
+val esQueryE:String = s"""{ "query": { "bool": {
+	"filter": { "term": { "datasource": "${datasource}" } }
+}}}"""
+
 
 //val esQuery:String = s"?q=datasource:${datasource}"
 //val esQuery:String = s"""{ "query":{"term":{"datasource":"${datasource}"}} }"""
+/*
+val excludeLabelsV = Array("supplier","category")
+val excludeLabelsE = Array("reports_to","part_of","supplies")
+
 val esQueryV:String = s"""{ "query": { "bool": {
-	"filter": { "term": { "datasource": "${datasource}" } },
-	"must_not": { "terms": { "label": ${excludeLabelsV.mkString("[\"","\",\"","\"]")} } }
+	"filter": { "term": { "datasource": "${datasource}" } }
+	, "must_not": { "terms": { "label": ${excludeLabelsV.mkString("[\"","\",\"","\"]")} } }
 }}}"""
 val esQueryE:String = s"""{ "query": { "bool": {
-	"filter": { "term": { "datasource": "${datasource}" } },
-	"must_not": { "terms": { "label": ${excludeLabelsE.mkString("[\"","\",\"","\"]")} } }
+	"filter": { "term": { "datasource": "${datasource}" } }
+	, "must_not": { "terms": { "label": ${excludeLabelsE.mkString("[\"","\",\"","\"]")} } }
 }}}"""
+*/
 
 /*
 val datasource = "modern"
@@ -82,11 +102,11 @@ val esQueryE:String = s"?q=datasource:${datasource}"
 
 val dfV = spark.read.format("es").options(conf).
 	option("es.query", esQueryV).
-	schema(Encoders.product[ElasticVertex].schema).	//schema(schemaV).
+	schema(Encoders.product[ElasticVertex].schema).		// schema(schemaV).
 	load(resourceV)
 val dfE = spark.read.format("es").options(conf).
 	option("es.query", esQueryE).
-	schema(Encoders.product[ElasticEdge].schema).	//schema(schemaE).
+	schema(Encoders.product[ElasticEdge].schema).		// schema(schemaE).
 	load(resourceE)
 val gf = GraphFrame(dfV,dfE)
 
