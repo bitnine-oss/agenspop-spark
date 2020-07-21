@@ -1,4 +1,19 @@
 /*
+export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
+
+## start shell (default memory 1G)
+cd $SPARK_HOME
+
+./build/mvn \
+    -Dhadoop.version=2.10.0 \
+    -Pyarn,hive,hive-thriftserver \
+    -Pscala-2.11 \
+    -Pkubernetes \
+    -DskipTests \
+    clean package
+
+./dev/make-distribution.sh --name hadoop2.10 --tgz -Pkubernetes -Phadoop-2.10 -Phive -Phive-thriftserver -Pyarn
+
 ## start shell (default memory 1G)
 bin/spark-shell --master spark://minmac:7077 --executor-memory 4G
 
@@ -103,11 +118,46 @@ res25: org.apache.spark.sql.DataFrame = []
 scala> sql("CREATE TABLE es_test.modern_v STORED AS PARQUET select * from modern_v")
 res26: org.apache.spark.sql.DataFrame = []
 
+CREATE EXTERNAL TABLE tbl_dogs(
+  breed STRING, 
+  sex STRING
+) STORED BY 'org.elasticsearch.hadoop.hive.EsStorageHandler'
+TBLPROPERTIES(
+  'es.resource'='hive_test',
+  'es.nodes'='192.168.0.30:39200',
+  'es.net.http.auth.user'='elastic',
+  'es.net.http.auth.pass'='bitnine',
+  'es.index.auto.create'='true',
+  'es.mapping.names'='breed:breed, sex:sex'
+);
+
+CREATE TABLE ht0_dogs (
+  breed STRING, 
+  sex STRING
+) using hive;
+
+CREATE TABLE demo_sales
+(id BIGINT, qty BIGINT, name STRING)
+COMMENT 'Demo: Connecting Spark SQL to Hive Metastore'
+PARTITIONED BY (rx_mth_cd STRING COMMENT 'Prescription Date YYYYMM aggregated')
+STORED AS PARQUET;
 
 
+create table if not exists es_test.ht1_dogs
+stored as parquet
+as 
+select * from es_test.tbl_dogs where 1=1;
 
+create table if not exists es_test.ht2_dogs
+as 
+select * from es_test.tbl_dogs where 1=1;
 
+create table if not exists es_test.ht3_dogs
+using hive
+as 
+select * from es_test.tbl_dogs where 1=1;
 
+mvn clean package -DskipTests -Phadoop-2 -Pdist
 
 
 

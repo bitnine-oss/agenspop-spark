@@ -110,6 +110,7 @@ val dfE = spark.read.format("es").options(conf).
 	load(resourceE)
 val gf = GraphFrame(dfV,dfE)
 
+
 /////////////////////////////////////////////////////////////////
 //
 // inDegree
