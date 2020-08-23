@@ -30,19 +30,20 @@ val spark = SparkSession.builder().config(sc.getConf).getOrCreate
 // sc.setCheckpointDir("/Users/bgmin/Temp/checkpoint")
 
 
-case class ElasticProperty(key:String, `type`:String, value:String)
-case class ElasticElement(id:String, property:ElasticProperty)
-case class ElasticVertex(timestamp:String, datasource:String, id:String, label:String, properties:Array[ElasticProperty])
-case class ElasticEdge(timestamp:String, datasource:String, id:String, label:String, properties:Array[ElasticProperty], src:String, dst:String)
+// case class ElasticProperty(key:String, `type`:String, value:String)
+// case class ElasticElement(id:String, property:ElasticProperty)
+// case class ElasticVertex(timestamp:String, datasource:String, id:String, label:String, properties:Array[ElasticProperty])
+// case class ElasticEdge(timestamp:String, datasource:String, id:String, label:String, properties:Array[ElasticProperty], src:String, dst:String)
+
+// val encoderP = RowEncoder(schemaP)
 
 val schemaP = StructType( Array(
 	StructField("key", StringType, false),
 	StructField("type", StringType, false),
 	StructField("value", StringType, false)
 ))
-val encoderP = RowEncoder(schemaP)
 val schemaV = StructType( Array(
-	StructField("timestamp", StringType, false),
+	StructField("timestamp", TimestampType, false),
 	StructField("datasource", StringType, false),
 	StructField("id", StringType, false),
 	StructField("label", StringType, false),
@@ -54,15 +55,16 @@ val schemaE = schemaV.
 
 val conf = Map(
 	"es.nodes"->"tonyne.iptime.org",
-	"es.port"->"39200",
+	"es.port"->"29200",
 	"es.nodes.wan.only"->"true",
 	"es.mapping.id"->"id",
 	"es.write.operation"->"upsert",
 	"es.index.auto.create"->"true",
 	"es.scroll.size"->"10000",
 	"es.net.http.auth.user"->"elastic",			// elasticsearch security
-	"es.net.http.auth.pass"->"bitnine",			// => curl -u user:password
-	"es.mapping.date.rich"->"false"				// for timestamp
+	"es.net.http.auth.pass"->"bitnine"			// => curl -u user:password
+	, "es.mapping.date.rich"->"true"		    // for timestamp
+	, "es.spark.dataframe.write.null" -> "true"
 )
 val resourceV = "agensvertex"
 val resourceE = "agensedge"
@@ -70,10 +72,10 @@ val resourceE = "agensedge"
 
 val datasource = "modern"		// "northwind"
 val esQueryV:String = s"""{ "query": { "bool": {
-	"filter": { "term": { "datasource": "${datasource}" } }
+	"must": { "term": { "datasource": "${datasource}" } }
 }}}"""
 val esQueryE:String = s"""{ "query": { "bool": {
-	"filter": { "term": { "datasource": "${datasource}" } }
+	"must": { "term": { "datasource": "${datasource}" } }
 }}}"""
 
 
@@ -99,15 +101,19 @@ val esQueryV:String = s"?q=datasource:${datasource}"
 val esQueryE:String = s"?q=datasource:${datasource}"
 */
 
+	// schema(Encoders.product[ElasticVertex].schema).		// 
+	// schema(Encoders.product[ElasticEdge].schema).		// 
 
 val dfV = spark.read.format("es").options(conf).
 	option("es.query", esQueryV).
-	schema(Encoders.product[ElasticVertex].schema).		// schema(schemaV).
+	schema(schemaV).
 	load(resourceV)
+
 val dfE = spark.read.format("es").options(conf).
 	option("es.query", esQueryE).
-	schema(Encoders.product[ElasticEdge].schema).		// schema(schemaE).
+	schema(schemaE).
 	load(resourceE)
+
 val gf = GraphFrame(dfV,dfE)
 
 
