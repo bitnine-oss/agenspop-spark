@@ -1,28 +1,29 @@
-# agenspop-spark
+# AgensPop-Spark
+AgensPop-Spark is a library that facilitates the integration of AgensGraph, a graph database, with Apache Spark, a distributed computing framework. This integration enables users to perform large-scale graph analytics by leveraging the power of both systems.
 
-### summary
+### Summary
 
-es-hadoop 을 이용해 Spark로 그래프 분석을 수행할 수 있는 분석용 백엔드 서버
+An analytical backend server that can perform graph analysis with Spark using es-hadoop.
 
-- build : mvn clean install -DskipTests
-- deploy : target/agenspop-spark-0.7.3.jar 
-- run : java -jar <jar_file> --spring.config.name=es-config
-- demo page : http://<IP:8081>/index.html
+- build : `mvn clean install -DskipTests`
+- deploy : `target/agenspop-spark-0.7.3.jar`
+- run : `java -jar <jar_file> --spring.config.name=es-config`
+- demo page : `http://<IP:8081>/index.html`
 
-### preparations
+### Preparations
 
-1) spark-2.4.6-bin-hadoop2.7 설치
+1) Install `spark-2.4.6-bin-hadoop2.7`
 
-- log4j.properties 생성 (template 복사)
-- 설치 위치는 spark-home 으로 사용됨
+- Create `log4j.properties` (copy template)
+- The installation location is used as `spark-home`
 
-2) es-config.yml 작성
+2) Write `es-config.yml`
 
-- agens.elasticsearch 의 host, port, vertex-index, edge-index 설정
-- agens.spark 의 app-name 과 spark-home 설정
-- **<주의>** agens.spark.master-uri 는 'local'로 고정 (변경 금지)
+- In `agens.elasticsearch`: `host`, `port`, `vertex-index`, `edge-index` Settings
+- In `agens.spark`: `app-name` and `spark-home` Settings
+- **<caution>** agens.spark.master-uri is fixed to `'local'` (do not change)
 
-```text
+```yml
 server:
   port: 8081
 ...
@@ -45,17 +46,17 @@ agens:
     extra-jars: jars/elasticsearch-hadoop-7.7.1.jar,jars/elasticsearch-spark-20_2.11-7.7.1.jar,jars/graphframes-0.8.0-spark2.4-s_2.11.jar
 ```
 
-### build & run
+### Build & Run
 
-```
+```sh
 mvn clean install -DskipTests
 
 java -jar $jarfile --spring.config.name=$cfgname
-## 또는
+## or
 mvn spring-boot:run --spring.config.location=$cfgfilename
 ```
 
-### demo
+### Demo
 
 backend
 
