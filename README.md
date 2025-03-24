@@ -60,13 +60,13 @@ mvn spring-boot:run --spring.config.location=$cfgfilename
 
 backend
 
-<img src="https://github.com/bitnine-oss/agenspop-spark/blob/master/docs/images/agenspop-spark-backend-console.png">
+<img src="https://github.com/skaiworldwide-oss/agenspop-spark/blob/master/docs/images/agenspop-spark-backend-console.png">
 
 frontend
 
 - http://localhost:8081/index.html
 
-<img src="https://github.com/bitnine-oss/agenspop-spark/blob/master/docs/images/agenspop-spark-frontend-web.png">
+<img src="https://github.com/skaiworldwide-oss/agenspop-spark/blob/master/docs/images/agenspop-spark-frontend-web.png">
 
 results after indegree centrality
 
